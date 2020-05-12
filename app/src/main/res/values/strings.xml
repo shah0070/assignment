@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">AirtelAssignment</string>
+    <string name="error_message">Unable to get country names. Please retry later</string>
+    <string name="enter_address_hint">Enter Address to Search...</string>
+    <string name="data_not_found">No Data Found Please try Different Address...</string>
+</resources>
