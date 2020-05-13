@@ -46,6 +46,7 @@ class SearchViewModelTest {
         Assert.assertNotNull(viewModel!!.getApiErrorState())
         Assert.assertEquals(false, viewModel!!.getApiErrorState().value)
         Assert.assertEquals(false, viewModel!!.loading.value)
+        Assert.assertEquals(0, viewModel!!.countries.value!!.size)
     }
 
     @Test
@@ -67,9 +68,9 @@ class SearchViewModelTest {
         Mockito.`when`(countriesService!!.getCountries("india")).thenReturn(Single.just(data))
         viewModel!!.fetchCountries("india")
         Assert.assertEquals(false, viewModel!!.getApiErrorState().value)
-        Assert.assertEquals(true, viewModel!!.loading.value)
-
     }
+
+
 
     @After
     @Throws(Exception::class)

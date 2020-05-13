@@ -45,6 +45,7 @@ class SearchViewModel : ViewModel() {
         searchViewDisposable = CompositeDisposable()
         countryLoadError.value = false
         loading.value = false
+        countries.value = arrayListOf()
     }
 
     fun setcloseView(searchview: ImageView) {
