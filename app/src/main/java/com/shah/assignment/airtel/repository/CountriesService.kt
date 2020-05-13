@@ -15,7 +15,8 @@ class CountriesService {
         DaggerApiComponent.create().countryServiceInject(this)
     }
 
-    fun getCountries(queryAddress: String): Single<AddressBaseModel> {
+    public fun getCountries(queryAddress: String): Single<AddressBaseModel> {
         return api.getCountriesAddress(queryAddress)
     }
+
 }

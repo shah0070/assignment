@@ -5,12 +5,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.shah.assignment.airtel.di.DaggerApiComponent
 import com.shah.assignment.airtel.model.AddressBaseModel
 import com.shah.assignment.airtel.model.AddressList
 import com.shah.assignment.airtel.repository.CountriesService
-import com.jakewharton.rxbinding2.view.RxView
-import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -27,22 +27,25 @@ class SearchViewModel : ViewModel() {
     //remove garbage memory
     private var searchViewDisposable: CompositeDisposable
 
-    init {
-        DaggerApiComponent.create().viewModelInject(this)
-        searchViewDisposable = CompositeDisposable()
-    }
 
     private val disposable = CompositeDisposable()
 
     // data variable
-    val countries = MutableLiveData<List<AddressList>>()
+    var countries = MutableLiveData<List<AddressList>>()
 
     //loading and error
-    val countryLoadError = MutableLiveData<Boolean>()
+    var countryLoadError = MutableLiveData<Boolean>()
 
     //error variable
-    val loading = MutableLiveData<Boolean>()
+    var loading = MutableLiveData<Boolean>()
 
+
+    init {
+        DaggerApiComponent.create().viewModelInject(this)
+        searchViewDisposable = CompositeDisposable()
+        countryLoadError.value = false
+        loading.value = false
+    }
 
     fun setcloseView(searchview: ImageView) {
         searchViewDisposable.add(RxView.clicks(searchview)
@@ -57,6 +60,18 @@ class SearchViewModel : ViewModel() {
 
     fun getSearChView(): EditText? {
         return searchview
+    }
+
+    fun getcontryList(): MutableLiveData<List<AddressList>> {
+        return countries
+    }
+
+    fun getLoadingState(): MutableLiveData<Boolean> {
+        return loading
+    }
+
+    fun getApiErrorState(): MutableLiveData<Boolean> {
+        return countryLoadError
     }
 
     var searchview: EditText? = null

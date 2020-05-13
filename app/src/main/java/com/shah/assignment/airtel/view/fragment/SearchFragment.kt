@@ -66,7 +66,7 @@ class SearchFragment : Fragment() {
                 searchViewModel.countryLoadError.observe(this, Observer { isError ->
                     isError?.let {
                         if (it) {
-                            Toast.makeText(activity,it.toString(),Toast.LENGTH_LONG).show()
+                            Toast.makeText(activity, it.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
                 })
