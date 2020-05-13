@@ -62,9 +62,9 @@ class SearchViewModelTest {
         val v: Double? = null
         val vv: Double? = null
         val list: MutableList<AddressList> = ArrayList()
-        list.add(AddressList("sa", "sa", "as", v, vv, "sh"))
-        val data = AddressBaseModel("data1",
-                ModelData("data", "data", list))
+        list.add(AddressList("id", "city", "address", v, vv, "lable"))
+        val data = AddressBaseModel("requestid",
+                ModelData("completestring", "focusword", list))
         Mockito.`when`(countriesService!!.getCountries("india")).thenReturn(Single.just(data))
         viewModel!!.fetchCountries("india")
         Assert.assertEquals(false, viewModel!!.getApiErrorState().value)
