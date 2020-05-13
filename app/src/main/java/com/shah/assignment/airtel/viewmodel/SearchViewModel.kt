@@ -25,9 +25,6 @@ class SearchViewModel : ViewModel() {
     lateinit var countriesService: CountriesService
 
     //remove garbage memory
-    private var searchViewDisposable: CompositeDisposable
-
-
     private val disposable = CompositeDisposable()
 
     // data variable
@@ -42,26 +39,11 @@ class SearchViewModel : ViewModel() {
 
     init {
         DaggerApiComponent.create().viewModelInject(this)
-        searchViewDisposable = CompositeDisposable()
         countryLoadError.value = false
         loading.value = false
         countries.value = arrayListOf()
     }
 
-    fun setcloseView(searchview: ImageView) {
-        searchViewDisposable.add(RxView.clicks(searchview)
-                .subscribe {
-                    getSearChView().let {
-                        it?.text = null
-                        clearlist()
-                    }
-                }
-        )
-    }
-
-    fun getSearChView(): EditText? {
-        return searchview
-    }
 
     fun getcontryList(): MutableLiveData<List<AddressList>> {
         return countries
@@ -75,23 +57,7 @@ class SearchViewModel : ViewModel() {
         return countryLoadError
     }
 
-    var searchview: EditText? = null
-    fun setSearchViewwithFilter(searchview: EditText) {
-        this.searchview = searchview
-        searchViewDisposable.add(RxTextView.textChanges(searchview)
-                .debounce(1, TimeUnit.SECONDS)
-                .map { it.toString() }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it.isNotEmpty() && it.length > 2) {
-                        fetchCountries(it.toString())
-                    } else {
-                        clearlist()
-                    }
-                }
-        )
-    }
+
 
     fun clearlist() {
         loading.value = false
@@ -121,7 +87,6 @@ class SearchViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        searchViewDisposable.dispose()
         disposable.clear()
     }
 }

@@ -9,18 +9,27 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.shah.androidarchitectures.R
 import com.shah.assignment.airtel.view.adapter.SearchAdapter
 import com.shah.assignment.airtel.viewmodel.SearchViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.searchfragment.*
+import java.util.concurrent.TimeUnit
 
 class SearchFragment : Fragment() {
     lateinit var searchViewModel: SearchViewModel
     private val searchAdapter = SearchAdapter(arrayListOf())
     lateinit var viewSearchFragment: View
 
+    private lateinit var searchViewDisposable: CompositeDisposable
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         viewSearchFragment = inflater.inflate(R.layout.searchfragment, container, false)
+        searchViewDisposable = CompositeDisposable()
 
         searchViewModel = ViewModelProviders.of(this).get(SearchViewModel::class.java)
 
@@ -43,9 +52,29 @@ class SearchFragment : Fragment() {
 
     fun bindingview() {
         searchViewModel.let {
-            searchViewModel.setSearchViewwithFilter(search_view)
-            searchViewModel.setcloseView(close_view)
+
+            searchViewDisposable.add(RxTextView.textChanges(search_view)
+                    .debounce(1, TimeUnit.SECONDS)
+                    .map { it.toString() }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        if (it.isNotEmpty() && it.length > 2) {
+                            searchViewModel.fetchCountries(it.toString())
+                        } else {
+                            searchViewModel.clearlist()
+                        }
+                    }
+            )
         }
+
+
+        searchViewDisposable.add(RxView.clicks(close_view)
+                .subscribe {
+                    search_view.text = null
+                    searchViewModel.clearlist()
+                }
+        )
     }
 
     fun observeViewModel() {
@@ -85,5 +114,10 @@ class SearchFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        searchViewDisposable.dispose()
     }
 }
